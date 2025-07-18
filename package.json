@@ -1,0 +1,55 @@
+{
+  "name": "@pidchashyi/next-i18n",
+  "version": "1.0.2",
+  "description": "A simple i18n library for React applications with TypeScript support",
+  "keywords": [
+    "i18n",
+    "internationalization",
+    "react",
+    "typescript",
+    "translations"
+  ],
+  "homepage": "https://github.com/Marian1309/npm-bun-base#readme",
+  "bugs": {
+    "url": "https://github.com/Marian1309/npm-bun-base/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Marian1309/npm-bun-base.git"
+  },
+  "license": "MIT",
+  "author": "Marian Pidchashyi",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "bun run build",
+    "postpublish": "rimraf -rf dist"
+  },
+  "dependencies": {
+    "@pidchashyi/try-catch": "^2.1.0",
+    "next": "15.3.5",
+    "react": "^18.3.1",
+    "react-hot-toast": "^2.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "@types/react": "^18.0.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1",
+    "typescript": "^5.0.0"
+  }
+}
