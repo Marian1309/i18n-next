@@ -1,0 +1,86 @@
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { Input } from "./input";
+
+type EditableTranslationProps = {
+  translationKey: string;
+  value: string;
+  language: string;
+  onSave: (key: string, newValue: string) => Promise<void>;
+};
+
+export const EditableTranslation = ({
+  translationKey,
+  value,
+  language,
+  onSave,
+}: EditableTranslationProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedValue, setEditedValue] = useState(value);
+  const [isSaving, setIsSaving] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setEditedValue(value);
+    setIsEditing(false);
+    setIsSaving(false);
+  }, [value, language]);
+
+  const handleDoubleClick = () => {
+    if (!isSaving) {
+      setIsEditing(true);
+    }
+  };
+
+  const handleSave = async () => {
+    if (editedValue === value || isSaving) return;
+
+    setIsSaving(true);
+    try {
+      await onSave(translationKey, editedValue);
+      setIsEditing(false);
+    } catch (error) {
+      setEditedValue(value); // Revert on error
+      toast.error("Failed to save translation");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleBlur = () => {
+    handleSave();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSave();
+    } else if (e.key === "Escape") {
+      setEditedValue(value);
+      setIsEditing(false);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <Input
+        ref={inputRef}
+        value={editedValue}
+        onChange={(e) => setEditedValue(e.target.value)}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        disabled={isSaving}
+        autoFocus
+        className={isSaving ? "cursor-wait opacity-50" : ""}
+      />
+    );
+  }
+
+  return (
+    <span
+      onDoubleClick={handleDoubleClick}
+      className={isSaving ? "cursor-wait opacity-50" : "cursor-text"}
+    >
+      {value}
+    </span>
+  );
+};
