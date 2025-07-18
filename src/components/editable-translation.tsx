@@ -48,7 +48,8 @@ export const EditableTranslation = <TKey extends string = string>({
   };
 
   const handleBlur = () => {
-    handleSave();
+    setEditedValue(value); // Revert to original value
+    setIsEditing(false); // Exit edit mode
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
