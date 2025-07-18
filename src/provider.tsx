@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 
 import { I18nClient } from "./client";
-import { loadTranslations } from "./utils";
+import { loadTranslations } from "./actions";
 import {
   SupportedLanguages,
   FlatTranslations,

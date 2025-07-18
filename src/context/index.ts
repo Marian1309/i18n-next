@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext } from "react";
 
 import {
@@ -6,6 +8,6 @@ import {
   FlatTranslations,
 } from "../types";
 
-export const I18nContext = createContext<
-  I18nContextType<SupportedLanguages, FlatTranslations> | undefined
->(undefined);
+export const I18nContext = createContext<I18nContextType<any, any> | undefined>(
+  undefined
+);

@@ -2,19 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Input } from "./input";
 
-type EditableTranslationProps = {
-  translationKey: string;
+type EditableTranslationProps<TKey extends string = string> = {
+  translationKey: TKey;
   value: string;
   language: string;
-  onSave: (key: string, newValue: string) => Promise<void>;
+  onSave: (key: TKey, newValue: string) => Promise<void>;
 };
 
-export const EditableTranslation = ({
+export const EditableTranslation = <TKey extends string = string>({
   translationKey,
   value,
   language,
   onSave,
-}: EditableTranslationProps) => {
+}: EditableTranslationProps<TKey>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
   const [isSaving, setIsSaving] = useState(false);

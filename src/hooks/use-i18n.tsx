@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext } from "react";
 
 import { I18nContext } from "../context";
@@ -17,13 +19,12 @@ export const useI18n = <
     throw new Error("useI18n must be used within I18nProvider");
   }
 
-  return context as I18nContextType<TLanguages, TTranslations>;
+  return context as unknown as I18nContextType<TLanguages, TTranslations>;
 };
 
 // Convenience function for creating typed hooks
 export const createTypedI18nHook = <
-  TLanguages extends SupportedLanguages,
   TTranslations extends FlatTranslations
 >() => {
-  return () => useI18n<TLanguages, TTranslations>();
+  return () => useI18n<string[], TTranslations>();
 };

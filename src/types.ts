@@ -2,18 +2,28 @@ import type { ReactNode } from "react";
 
 // Core generic types for type-safe i18n
 export type SupportedLanguages = readonly string[];
-export type TranslationKeys<T extends Record<string, any>> = keyof T & string;
 
-// Extract nested keys for deep translation objects
-export type NestedKeyOf<T extends Record<string, any>> = {
-  [K in keyof T & string]: T[K] extends Record<string, any>
-    ? `${K}.${NestedKeyOf<T[K]>}`
-    : K;
-}[keyof T & string];
+// Extract all leaf keys from nested objects with dot notation (max depth 5)
+export type LeafKeys<
+  T,
+  Prev extends string = "",
+  Depth extends readonly any[] = []
+> = Depth["length"] extends 5
+  ? `${Prev}${keyof T & string}`
+  : {
+      [K in keyof T & string]: T[K] extends Record<string, any>
+        ? T[K] extends any[] | Date | Function
+          ? `${Prev}${K}`
+          : LeafKeys<T[K], `${Prev}${K}.`, [...Depth, any]>
+        : `${Prev}${K}`;
+    }[keyof T & string];
+
+// Use LeafKeys to infer all possible translation keys (including nested)
+export type TranslationKeys<T extends Record<string, any>> = LeafKeys<T>;
 
 // Translation value type (supports nested objects)
 export type TranslationValue = string | Record<string, any>;
-export type FlatTranslations = Record<string, string>;
+export type FlatTranslations = Record<string, TranslationValue>;
 
 // Generic language configuration
 export type LanguageConfig<
@@ -49,10 +59,8 @@ export type InferTranslations<T> = T extends Record<string, infer U>
   : FlatTranslations;
 
 // Helper type for creating strongly typed i18n hooks
-export type TypedI18nHook<
-  TLanguages extends SupportedLanguages,
-  TTranslations extends FlatTranslations
-> = () => I18nContextType<TLanguages, TTranslations>;
+export type TypedI18nHook<TTranslations extends FlatTranslations> =
+  () => I18nContextType<string[], TTranslations>;
 
 // Factory type for creating typed configurations
 export interface I18nConfigFactory<TLanguages extends SupportedLanguages> {

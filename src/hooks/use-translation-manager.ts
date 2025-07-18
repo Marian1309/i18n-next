@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -8,7 +10,7 @@ import {
   FlatTranslations,
   TranslationKeys,
 } from "../types";
-import { loadTranslations } from "../utils";
+import { loadTranslations } from "../actions";
 
 export const useTranslationManager = <
   TLanguages extends SupportedLanguages = string[],
@@ -106,7 +108,10 @@ export const useTranslationManager = <
         const newTranslations = await loadTranslations(newLang);
 
         // Update cookie first
-        await changeLanguageAction(newLang, config);
+        await changeLanguageAction(
+          newLang,
+          config as unknown as LanguageConfig<string[], TTranslations>
+        );
 
         // Then update state
         setLanguage(newLang);

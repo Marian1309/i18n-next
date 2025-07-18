@@ -9,6 +9,7 @@ import {
   SupportedLanguages,
   FlatTranslations,
   TranslationKeys,
+  I18nContextType,
 } from "./types";
 import { I18nContext } from "./context";
 
@@ -37,7 +38,7 @@ export const I18nClient = <
       return (
         <TranslationDisplay
           translationKey={key}
-          value={value}
+          value={value as string}
           language={language}
           onSave={handleTranslationSave}
         />
@@ -47,7 +48,14 @@ export const I18nClient = <
   );
 
   return (
-    <I18nContext.Provider value={{ t, language, changeLanguage }}>
+    <I18nContext.Provider
+      value={
+        { t, language, changeLanguage } as I18nContextType<
+          TLanguages,
+          TTranslations
+        >
+      }
+    >
       {children}
     </I18nContext.Provider>
   );

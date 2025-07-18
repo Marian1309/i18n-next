@@ -275,7 +275,7 @@ export const useTypedI18n = createTypedI18nHook<
 - `defineLanguages(languages)` - Type-safe language definition [[memory:3663219]]
 - `defineTranslations(translations)` - Type-safe translation definition
 - `createI18nConfig(languages)` - Create typed configuration factory
-- `createTypedI18nHook<TLanguages, TTranslations>()` - Create typed hook
+- `createTypedI18nHook<TTranslations>()` - Create typed hook
 - `isValidLanguage(lang, supportedLanguages)` - Language validation
 
 ### Components

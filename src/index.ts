@@ -3,6 +3,7 @@ export { I18nClient } from "./client";
 export { useI18n, createTypedI18nHook } from "./hooks/use-i18n";
 export { TranslationDisplay } from "./components/translation-display";
 export { EditableTranslation } from "./components/editable-translation";
+export { loadTranslations } from "./actions";
 
 // Type-safe utilities
 export {
@@ -10,14 +11,12 @@ export {
   defineLanguages,
   defineTranslations,
   isValidLanguage,
-  loadTranslations,
 } from "./utils";
 
 // Core types
 export type {
   SupportedLanguages,
   TranslationKeys,
-  NestedKeyOf,
   TranslationValue,
   FlatTranslations,
   LanguageConfig,
