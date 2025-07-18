@@ -1,2 +1,2 @@
 export { I18nProvider } from "./provider";
-export { useI18n } from "./client";
+export { useI18n } from "./hooks/use-i18n";

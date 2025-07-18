@@ -5,9 +5,10 @@ import { cookies } from "next/headers";
 import { promises as fs } from "fs";
 import path from "path";
 
-import type { LanguageConfig } from "./types";
 import { tryCatch } from "@pidchashyi/try-catch";
 import { isFailure } from "@pidchashyi/try-catch";
+
+import type { LanguageConfig } from "../types";
 
 export const changeLanguageAction = async (
   lang: string,
