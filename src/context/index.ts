@@ -1,7 +1,11 @@
 import { createContext } from "react";
 
-import { I18nContextType } from "../types";
+import {
+  I18nContextType,
+  SupportedLanguages,
+  FlatTranslations,
+} from "../types";
 
-export const I18nContext = createContext<I18nContextType | undefined>(
-  undefined
-);
+export const I18nContext = createContext<
+  I18nContextType<SupportedLanguages, FlatTranslations> | undefined
+>(undefined);
