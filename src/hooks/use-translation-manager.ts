@@ -12,18 +12,19 @@ import {
 } from "../types";
 import { loadTranslations } from "../actions";
 
-export const useTranslationManager = <
-  TLanguages extends SupportedLanguages = string[],
-  TTranslations extends FlatTranslations = FlatTranslations
->(
-  config: LanguageConfig<TLanguages, TTranslations>
+export const useTranslationManager = (
+  config: LanguageConfig<SupportedLanguages, FlatTranslations>
 ) => {
-  const [language, setLanguage] = useState<TLanguages[number]>(
+  const [language, setLanguage] = useState<SupportedLanguages[number]>(
     config.initialLanguage
   );
-  const [translations, setTranslations] = useState<TTranslations>(config.json);
+  const [translations, setTranslations] = useState<FlatTranslations>(
+    config.json
+  );
   const [isChangingLocale, setIsChangingLocale] = useState(false);
-  const currentLanguageRef = useRef<TLanguages[number]>(config.initialLanguage);
+  const currentLanguageRef = useRef<SupportedLanguages[number]>(
+    config.initialLanguage
+  );
   const isMountedRef = useRef(false);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export const useTranslationManager = <
       try {
         const loadedTranslations = await loadTranslations(language);
         if (currentLanguageRef.current === language) {
-          setTranslations(loadedTranslations as TTranslations);
+          setTranslations(loadedTranslations as FlatTranslations);
         }
       } catch (error) {
         console.error("Failed to load initial translations:", error);
@@ -56,14 +57,14 @@ export const useTranslationManager = <
   }, [language]);
 
   const handleTranslationSave = useCallback(
-    async (key: TranslationKeys<TTranslations>, newValue: string) => {
+    async (key: TranslationKeys<Record<string, any>>, newValue: string) => {
       const prevTranslations = translations;
       try {
         // Optimistically update UI
         const updatedTranslations = {
           ...translations,
           [key]: newValue,
-        } as TTranslations;
+        } as FlatTranslations;
         setTranslations(updatedTranslations);
 
         // Save to file
@@ -76,7 +77,7 @@ export const useTranslationManager = <
             toast.success("Translation saved");
           } else {
             // If the file content doesn't match what we expect, reload translations
-            setTranslations(freshTranslations as TTranslations);
+            setTranslations(freshTranslations as FlatTranslations);
           }
         }
       } catch (error) {
@@ -91,7 +92,7 @@ export const useTranslationManager = <
   );
 
   const changeLanguage = useCallback(
-    async (newLang: TLanguages[number]) => {
+    async (newLang: SupportedLanguages[number]) => {
       if (!config.supportedLanguages.includes(newLang) || isChangingLocale) {
         console.warn(
           `Unsupported language or locale change in progress: ${newLang}`
@@ -108,14 +109,11 @@ export const useTranslationManager = <
         const newTranslations = await loadTranslations(newLang);
 
         // Update cookie first
-        await changeLanguageAction(
-          newLang,
-          config as unknown as LanguageConfig<string[], TTranslations>
-        );
+        await changeLanguageAction(newLang, config);
 
         // Then update state
         setLanguage(newLang);
-        setTranslations(newTranslations as TTranslations);
+        setTranslations(newTranslations as FlatTranslations);
       } catch (error) {
         console.error("Failed to change language:", error);
         // Revert to previous state

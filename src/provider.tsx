@@ -10,32 +10,24 @@ import {
   I18nProviderConfig,
 } from "./types";
 
-interface Properties<
-  TLanguages extends SupportedLanguages = string[],
-  TTranslations extends FlatTranslations = FlatTranslations
-> {
+interface Properties {
   children: ReactNode;
-  config: I18nProviderConfig<TLanguages>;
+  config: I18nProviderConfig<SupportedLanguages>;
 }
 
-export const I18nProvider = async <
-  TLanguages extends SupportedLanguages = string[],
-  TTranslations extends FlatTranslations = FlatTranslations
->({
-  children,
-  config,
-}: Properties<TLanguages, TTranslations>) => {
+export const I18nProvider = async ({ children, config }: Properties) => {
   const cookieStore = await cookies();
-  const language = cookieStore.get("language")?.value as TLanguages[number];
+  const language = cookieStore.get("language")
+    ?.value as SupportedLanguages[number];
 
   const languageJsonData = await loadTranslations(language);
 
   return (
-    <I18nClient<TLanguages, TTranslations>
+    <I18nClient
       config={{
         ...config,
         initialLanguage: language,
-        json: languageJsonData as TTranslations,
+        json: languageJsonData as FlatTranslations,
       }}
     >
       <Toaster />

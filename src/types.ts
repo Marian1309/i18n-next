@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 
-// Core generic types for type-safe i18n
 export type SupportedLanguages = readonly string[];
 
-// Extract all leaf keys from nested objects with dot notation (max depth 5)
 export type LeafKeys<
   T,
   Prev extends string = "",
@@ -18,14 +16,19 @@ export type LeafKeys<
         : `${Prev}${K}`;
     }[keyof T & string];
 
-// Use LeafKeys to infer all possible translation keys (including nested)
 export type TranslationKeys<T extends Record<string, any>> = LeafKeys<T>;
 
-// Translation value type (supports nested objects)
+// Updated to support nested objects that will be flattened
 export type TranslationValue = string | Record<string, any>;
-export type FlatTranslations = Record<string, TranslationValue>;
 
-// Generic language configuration
+// Flattened translations - this is what the library works with internally after flattening
+export type FlatTranslations = Record<string, string>;
+
+// Helper type to convert nested translation types to flattened types
+export type FlattenTranslationType<T extends Record<string, any>> = {
+  [K in LeafKeys<T>]: string;
+};
+
 export type LanguageConfig<
   TLanguages extends SupportedLanguages = string[],
   TTranslations extends FlatTranslations = FlatTranslations
@@ -35,37 +38,20 @@ export type LanguageConfig<
   json: TTranslations;
 };
 
-// Generic i18n context type
+// Updated to work with flattened keys from nested types
 export type I18nContextType<
-  TLanguages extends SupportedLanguages = string[],
-  TTranslations extends FlatTranslations = FlatTranslations
+  TTranslations extends Record<string, any> = Record<string, any>
 > = {
   t: (key: TranslationKeys<TTranslations>) => ReactNode;
-  language: TLanguages[number];
-  changeLanguage: (lang: TLanguages[number]) => Promise<void>;
+  language: string;
+  changeLanguage: (lang: string) => Promise<void>;
 };
 
-// Configuration for library consumers
 export type I18nProviderConfig<TLanguages extends SupportedLanguages> = {
   initialLanguage: TLanguages[number];
   supportedLanguages: TLanguages;
 };
 
-// Utility types for translation file inference
-export type InferTranslations<T> = T extends Record<string, infer U>
-  ? U extends string
-    ? T
-    : FlatTranslations
-  : FlatTranslations;
-
-// Helper type for creating strongly typed i18n hooks
-export type TypedI18nHook<TTranslations extends FlatTranslations> =
-  () => I18nContextType<string[], TTranslations>;
-
-// Factory type for creating typed configurations
-export interface I18nConfigFactory<TLanguages extends SupportedLanguages> {
-  languages: TLanguages;
-  createConfig: (
-    initialLanguage: TLanguages[number]
-  ) => I18nProviderConfig<TLanguages>;
-}
+// Updated to accept nested translation types
+export type TypedI18nHook<TTranslations extends Record<string, any>> =
+  () => I18nContextType<TTranslations>;

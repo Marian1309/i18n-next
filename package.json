@@ -1,21 +1,22 @@
 {
   "name": "@pidchashyi/next-i18n",
-  "version": "1.1.6",
+  "version": "1.1.9",
   "description": "A simple i18n library for React applications with TypeScript support",
   "keywords": [
     "i18n",
     "internationalization",
     "react",
     "typescript",
-    "translations"
+    "translations",
+    "nextjs"
   ],
-  "homepage": "https://github.com/Marian1309/npm-bun-base#readme",
+  "homepage": "https://github.com/Marian1309/next-i18n#readme",
   "bugs": {
-    "url": "https://github.com/Marian1309/npm-bun-base/issues"
+    "url": "https://github.com/Marian1309/next-i18n/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Marian1309/npm-bun-base.git"
+    "url": "git+https://github.com/Marian1309/next-i18n.git"
   },
   "license": "MIT",
   "author": "Marian Pidchashyi",

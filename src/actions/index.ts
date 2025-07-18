@@ -8,11 +8,16 @@ import path from "path";
 import { tryCatch } from "@pidchashyi/try-catch";
 import { isFailure } from "@pidchashyi/try-catch";
 
-import type { LanguageConfig } from "../types";
+import { flattenTranslations } from "../lib/cn";
+import type {
+  LanguageConfig,
+  SupportedLanguages,
+  FlatTranslations,
+} from "../types";
 
 export const changeLanguageAction = async (
   lang: string,
-  config: LanguageConfig
+  config: LanguageConfig<SupportedLanguages, FlatTranslations>
 ) => {
   if (!config.supportedLanguages.includes(lang)) {
     throw new Error(`Unsupported language: ${lang}`);
@@ -43,7 +48,20 @@ export const updateTranslationAction = async (
 
   const translations = JSON.parse(fileContent.data);
 
-  translations[key] = newValue;
+  // Handle nested keys by setting the value at the correct path
+  const keys = key.split(".");
+  let current = translations;
+
+  // Navigate to the parent object
+  for (let i = 0; i < keys.length - 1; i++) {
+    if (!(keys[i] in current)) {
+      current[keys[i]] = {};
+    }
+    current = current[keys[i]];
+  }
+
+  // Set the final value
+  current[keys[keys.length - 1]] = newValue;
 
   await fs.writeFile(filePath, JSON.stringify(translations, null, 2) + "\n");
 
@@ -64,5 +82,8 @@ export const loadTranslations = async (lang: string) => {
     return {};
   }
 
-  return JSON.parse(result.data);
+  const nestedTranslations = JSON.parse(result.data);
+
+  // Flatten the nested translations into dot notation
+  return flattenTranslations(nestedTranslations);
 };

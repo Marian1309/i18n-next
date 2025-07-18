@@ -3,28 +3,22 @@
 import { useContext } from "react";
 
 import { I18nContext } from "../context";
-import {
-  SupportedLanguages,
-  FlatTranslations,
-  I18nContextType,
-} from "../types";
+import { FlatTranslations, I18nContextType } from "../types";
 
-export const useI18n = <
-  TLanguages extends SupportedLanguages = string[],
-  TTranslations extends FlatTranslations = FlatTranslations
->(): I18nContextType<TLanguages, TTranslations> => {
+const useI18n = <
+  TTranslations extends Record<string, any> = Record<string, any>
+>(): I18nContextType<TTranslations> => {
   const context = useContext(I18nContext);
 
   if (!context) {
     throw new Error("useI18n must be used within I18nProvider");
   }
 
-  return context as unknown as I18nContextType<TLanguages, TTranslations>;
+  return context as unknown as I18nContextType<TTranslations>;
 };
 
-// Convenience function for creating typed hooks
 export const createTypedI18nHook = <
-  TTranslations extends FlatTranslations
+  TTranslations extends Record<string, any>
 >() => {
-  return () => useI18n<string[], TTranslations>();
+  return () => useI18n<TTranslations>();
 };

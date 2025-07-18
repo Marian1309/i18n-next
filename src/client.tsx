@@ -2,43 +2,34 @@
 
 import { ReactNode, useCallback } from "react";
 
-import { TranslationDisplay } from "./components/translation-display";
-import { useTranslationManager } from "./hooks/use-translation-manager";
-import {
+import { I18nContext } from "./context";
+import { TranslationDisplay } from "./components";
+import { useTranslationManager } from "./hooks";
+import type {
   LanguageConfig,
   SupportedLanguages,
   FlatTranslations,
-  TranslationKeys,
   I18nContextType,
+  TranslationKeys,
 } from "./types";
-import { I18nContext } from "./context";
 
-interface Properties<
-  TLanguages extends SupportedLanguages = string[],
-  TTranslations extends FlatTranslations = FlatTranslations
-> {
-  config: LanguageConfig<TLanguages, TTranslations>;
+type Properties = {
+  config: LanguageConfig<SupportedLanguages, FlatTranslations>;
   children: ReactNode;
-}
+};
 
-export const I18nClient = <
-  TLanguages extends SupportedLanguages = string[],
-  TTranslations extends FlatTranslations = FlatTranslations
->({
-  config,
-  children,
-}: Properties<TLanguages, TTranslations>) => {
+export const I18nClient = ({ config, children }: Properties) => {
   const { language, translations, handleTranslationSave, changeLanguage } =
     useTranslationManager(config);
 
   const t = useCallback(
-    (key: TranslationKeys<TTranslations>) => {
+    (key: TranslationKeys<Record<string, any>>) => {
       const value = translations[key];
 
       return (
         <TranslationDisplay
           translationKey={key}
-          value={value as string}
+          value={value || `Missing translation: ${key}`}
           language={language}
           onSave={handleTranslationSave}
         />
@@ -50,10 +41,11 @@ export const I18nClient = <
   return (
     <I18nContext.Provider
       value={
-        { t, language, changeLanguage } as I18nContextType<
-          TLanguages,
-          TTranslations
-        >
+        {
+          t,
+          language,
+          changeLanguage,
+        } as I18nContextType<Record<string, any>>
       }
     >
       {children}
