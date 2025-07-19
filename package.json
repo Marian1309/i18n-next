@@ -1,6 +1,6 @@
 {
   "name": "@pidchashyi/next-i18n",
-  "version": "1.5.0",
+  "version": "1.5.5",
   "description": "A simple i18n library for React applications with TypeScript support",
   "keywords": [
     "i18n",
@@ -35,9 +35,9 @@
     "README.md"
   ],
   "scripts": {
-    "build:obfuscated": "tsc && node scripts/obfuscate.js medium",
-    "build:aggressive": "tsc && node scripts/obfuscate.js aggressive",
-    "build:production": "tsc && node scripts/obfuscate.js aggressive",
+    "build": "tsc",
+    "build:obfuscated": "npm run build && node scripts/obfuscate.js",
+    "obfuscate": "node scripts/obfuscate.js",
     "prepare": "bun run build:obfuscated",
     "postpublish": "rimraf -rf dist"
   },

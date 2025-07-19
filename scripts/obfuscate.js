@@ -1,159 +1,222 @@
+const JavaScriptObfuscator = require("javascript-obfuscator");
 const fs = require("fs");
 const path = require("path");
-const { minify } = require("terser");
-const JavaScriptObfuscator = require("javascript-obfuscator");
 
-// Aggressive obfuscation configuration
-const AGGRESSIVE_OBFUSCATION_CONFIG = {
-  // String obfuscation
-  stringArray: true,
-  stringArrayCallsTransform: true,
-  stringArrayCallsTransformThreshold: 1,
-  stringArrayEncoding: ["rc4"],
-  stringArrayIndexShift: true,
-  stringArrayRotate: true,
-  stringArrayShuffle: true,
-  stringArrayWrappersCount: 5,
-  stringArrayWrappersChainedCalls: true,
-  stringArrayWrappersParametersMaxCount: 5,
-  stringArrayWrappersType: "function",
-  stringArrayThreshold: 1,
+const distDir = path.join(__dirname, "..", "dist");
 
-  // Control flow obfuscation
-  controlFlowFlattening: true,
-  controlFlowFlatteningThreshold: 1,
-  deadCodeInjection: true,
-  deadCodeInjectionThreshold: 1,
+/**
+ * Recursively find all .js files in a directory
+ */
+function findJsFiles(dir) {
+  const files = [];
 
-  // Variable and function name obfuscation
-  identifierNamesGenerator: "hexadecimal",
-  renameGlobals: false, // Keep false to maintain exports
-  renameProperties: false, // Keep false to maintain API compatibility
-
-  // Advanced transformations
-  transformObjectKeys: true,
-  unicodeEscapeSequence: true,
-  selfDefending: true,
-  debugProtection: true,
-  debugProtectionInterval: 2000,
-  disableConsoleOutput: true,
-
-  // Code structure obfuscation
-  splitStrings: true,
-  splitStringsChunkLength: 5,
-  numbersToExpressions: true,
-  simplify: true,
-
-  // Performance vs Security balance
-  compact: true,
-  target: "node",
-
-  // Anti-debugging
-  domainLock: [], // Can add specific domains if needed
-  reservedNames: [], // Keep empty to allow maximum obfuscation
-  seed: Math.floor(Math.random() * 1000000), // Random seed for each build
-};
-
-// Medium obfuscation for better performance
-const MEDIUM_OBFUSCATION_CONFIG = {
-  stringArray: true,
-  stringArrayCallsTransform: true,
-  stringArrayThreshold: 0.75,
-  controlFlowFlattening: true,
-  controlFlowFlatteningThreshold: 0.5,
-  identifierNamesGenerator: "hexadecimal",
-  renameGlobals: false,
-  renameProperties: false,
-  transformObjectKeys: true,
-  compact: true,
-  target: "node",
-};
-
-async function terserMinify(code) {
-  const result = await minify(code, {
-    mangle: {
-      toplevel: true,
-      properties: false,
-    },
-    compress: {
-      dead_code: true,
-      drop_console: true,
-      drop_debugger: true,
-      pure_funcs: ["console.log", "console.warn", "console.error"],
-      passes: 3,
-    },
-    format: {
-      comments: false,
-      beautify: false,
-    },
-    keep_classnames: false,
-    keep_fnames: false,
-  });
-
-  return result.code;
-}
-
-async function obfuscateFile(filePath, level = "aggressive") {
-  try {
-    const code = fs.readFileSync(filePath, "utf8");
-
-    // First pass: Terser minification
-    let processedCode = await terserMinify(code);
-
-    // Second pass: JavaScript Obfuscation
-    const config =
-      level === "aggressive"
-        ? AGGRESSIVE_OBFUSCATION_CONFIG
-        : MEDIUM_OBFUSCATION_CONFIG;
-    const obfuscationResult = JavaScriptObfuscator.obfuscate(
-      processedCode,
-      config
-    );
-
-    fs.writeFileSync(filePath, obfuscationResult.getObfuscatedCode());
-    console.log(
-      `🔒 ${level} obfuscation applied: ${path.relative(
-        process.cwd(),
-        filePath
-      )}`
-    );
-  } catch (error) {
-    console.error(`❌ Failed to obfuscate ${filePath}:`, error.message);
-  }
-}
-
-async function obfuscateDirectory(dirPath, level = "aggressive") {
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dirPath, entry.name);
-
-    if (entry.isDirectory()) {
-      await obfuscateDirectory(fullPath, level);
-    } else if (entry.isFile() && entry.name.endsWith(".js")) {
-      await obfuscateFile(fullPath, level);
-    }
-  }
-}
-
-async function main() {
-  const distPath = path.join(__dirname, "..", "dist");
-  const level = process.argv[2] || "aggressive"; // 'aggressive' or 'medium'
-
-  if (!fs.existsSync(distPath)) {
-    console.error('❌ dist directory not found. Run "tsc" first.');
+  if (!fs.existsSync(dir)) {
+    console.log('❌ dist directory not found. Run "npm run build" first.');
     process.exit(1);
   }
 
-  console.log(`🔒 Starting ${level} code obfuscation...`);
-  console.log("⚠️  This may take a few moments for aggressive obfuscation...");
+  function scanDirectory(currentDir) {
+    const items = fs.readdirSync(currentDir);
 
-  await obfuscateDirectory(distPath, level);
+    for (const item of items) {
+      const fullPath = path.join(currentDir, item);
+      const stat = fs.statSync(fullPath);
 
-  console.log(`✅ ${level} code obfuscation complete!`);
+      if (stat.isDirectory()) {
+        scanDirectory(fullPath);
+      } else if (path.extname(item) === ".js") {
+        files.push(fullPath);
+      }
+    }
+  }
+
+  scanDirectory(dir);
+  return files;
+}
+
+/**
+ * Obfuscate a single JavaScript file
+ */
+function obfuscateFile(filePath) {
+  try {
+    const code = fs.readFileSync(filePath, "utf8");
+
+    const obfuscationResult = JavaScriptObfuscator.obfuscate(code, {
+      // Compact code
+      compact: true,
+
+      // Control flow flattening
+      controlFlowFlattening: true,
+      controlFlowFlatteningThreshold: 0.75,
+
+      // Dead code injection
+      deadCodeInjection: true,
+      deadCodeInjectionThreshold: 0.4,
+
+      // Debug protection
+      debugProtection: false, // Keep false for better compatibility
+      debugProtectionInterval: 0,
+
+      // Disable console output
+      disableConsoleOutput: false, // Keep false to preserve legitimate console usage
+
+      // Domain lock (leave empty for general use)
+      domainLock: [],
+      domainLockRedirectUrl: "about:blank",
+
+      // Force transform strings
+      forceTransformStrings: [],
+
+      // Identifier names generator
+      identifierNamesGenerator: "hexadecimal",
+
+      // Log level
+      log: false,
+
+      // Numbers to expressions
+      numbersToExpressions: true,
+
+      // Options preset
+      optionsPreset: "default",
+
+      // Rename globals
+      renameGlobals: false, // Keep false to avoid breaking React/Next.js globals
+
+      // Rename properties
+      renameProperties: false, // Keep false to avoid breaking object properties
+      renamePropertiesMode: "safe",
+
+      // Reserved names (important for React/Next.js compatibility)
+      reservedNames: [
+        "React",
+        "ReactDOM",
+        "useState",
+        "useEffect",
+        "useContext",
+        "useCallback",
+        "useMemo",
+        "useRef",
+        "useReducer",
+        "createContext",
+        "forwardRef",
+        "memo",
+        "lazy",
+        "Suspense",
+        "Fragment",
+        "StrictMode",
+        "Component",
+        "PureComponent",
+        "createElement",
+        "cloneElement",
+        "isValidElement",
+        "default",
+        "exports",
+        "module",
+        "require",
+        "__esModule",
+        "Object",
+        "Array",
+        "String",
+        "Number",
+        "Boolean",
+        "Function",
+        "Error",
+        "Promise",
+        "console",
+        "window",
+        "document",
+        "global",
+        "process",
+      ],
+
+      // Reserved strings
+      reservedStrings: [],
+
+      // Rotate array
+      rotateArray: true,
+
+      // Seed
+      seed: 0,
+
+      // Self defending
+      selfDefending: false, // Keep false for better compatibility
+
+      // Shuffle array
+      shuffleArray: true,
+
+      // Simplify
+      simplify: true,
+
+      // Source map
+      sourceMap: false,
+      sourceMapBaseUrl: "",
+      sourceMapFileName: "",
+      sourceMapMode: "separate",
+
+      // Split strings
+      splitStrings: true,
+      splitStringsChunkLength: 10,
+
+      // String array
+      stringArray: true,
+      stringArrayCallsTransform: true,
+      stringArrayCallsTransformThreshold: 0.5,
+      stringArrayEncoding: ["base64"],
+      stringArrayIndexShift: true,
+      stringArrayRotate: true,
+      stringArrayShuffle: true,
+      stringArrayWrappersCount: 1,
+      stringArrayWrappersChainedCalls: true,
+      stringArrayWrappersParametersMaxCount: 2,
+      stringArrayWrappersType: "variable",
+      stringArrayThreshold: 0.75,
+
+      // Target
+      target: "browser",
+
+      // Transform object keys
+      transformObjectKeys: false, // Keep false to avoid breaking object properties
+
+      // Unicode escape sequence
+      unicodeEscapeSequence: false,
+    });
+
+    fs.writeFileSync(filePath, obfuscationResult.getObfuscatedCode());
+    console.log(`✅ Obfuscated: ${path.relative(process.cwd(), filePath)}`);
+  } catch (error) {
+    console.error(`❌ Failed to obfuscate ${filePath}:`, error.message);
+    process.exit(1);
+  }
+}
+
+/**
+ * Main obfuscation process
+ */
+function main() {
+  console.log("🔒 Starting JavaScript obfuscation...\n");
+
+  const jsFiles = findJsFiles(distDir);
+
+  if (jsFiles.length === 0) {
+    console.log("⚠️  No JavaScript files found in dist directory.");
+    return;
+  }
+
+  console.log(`Found ${jsFiles.length} JavaScript file(s) to obfuscate:\n`);
+
+  jsFiles.forEach((file) => {
+    console.log(`📁 ${path.relative(process.cwd(), file)}`);
+  });
+
+  console.log("\n🔄 Obfuscating files...\n");
+
+  jsFiles.forEach(obfuscateFile);
+
+  console.log(`\n🎉 Successfully obfuscated ${jsFiles.length} file(s)!`);
   console.log(
-    "🛡️  Your code is now heavily protected against reverse engineering."
+    "💡 TypeScript declaration files (.d.ts) were preserved for library consumers."
   );
 }
 
-main().catch(console.error);
+// Run the obfuscation
+main();
