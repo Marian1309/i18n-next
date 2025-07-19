@@ -5,6 +5,7 @@ type TranslationDisplayProps<TKey extends string = string> = {
   value: string | undefined;
   language: string;
   onSave: (key: TKey, newValue: string) => Promise<void>;
+  enabled?: boolean;
 };
 
 export const TranslationDisplay = <TKey extends string = string>({
@@ -12,6 +13,7 @@ export const TranslationDisplay = <TKey extends string = string>({
   value,
   language,
   onSave,
+  enabled = true,
 }: TranslationDisplayProps<TKey>) => {
   if (!value) {
     return (
@@ -28,6 +30,7 @@ export const TranslationDisplay = <TKey extends string = string>({
       value={value}
       language={language}
       onSave={onSave}
+      enabled={enabled}
     />
   );
 };

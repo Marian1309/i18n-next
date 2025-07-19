@@ -8,6 +8,7 @@ type EditableTranslationProps<TKey extends string = string> = {
   value: string;
   language: string;
   onSave: (key: TKey, newValue: string) => Promise<void>;
+  enabled?: boolean;
 };
 
 export const EditableTranslation = <TKey extends string = string>({
@@ -15,6 +16,7 @@ export const EditableTranslation = <TKey extends string = string>({
   value,
   language,
   onSave,
+  enabled = false,
 }: EditableTranslationProps<TKey>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
@@ -28,7 +30,11 @@ export const EditableTranslation = <TKey extends string = string>({
   }, [value, language]);
 
   const handleDoubleClick = () => {
-    if (isSaving || value === `Missing translation: ${translationKey}`) {
+    if (
+      !enabled ||
+      isSaving ||
+      value === `Missing translation: ${translationKey}`
+    ) {
       return;
     }
     setIsEditing(true);
@@ -84,7 +90,6 @@ export const EditableTranslation = <TKey extends string = string>({
       className={cn(
         value === `Missing translation: ${translationKey}` &&
           "text-red-500 animate-pulse font-bold",
-        !value.startsWith("Missing translation:") && "cursor-text",
         isSaving && "cursor-wait opacity-50"
       )}
     >

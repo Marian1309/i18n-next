@@ -106,7 +106,6 @@ export const useTranslationManager = (
         setTranslations(newTranslations as FlatTranslations);
       } catch (error) {
         console.error("Failed to change language:", error);
-        // Revert to previous state
         setLanguage(prevLang);
         setTranslations(prevTranslations);
         toast.error("Failed to change language");

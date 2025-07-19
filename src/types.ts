@@ -33,20 +33,26 @@ export type LanguageConfig<
   initialLanguage: TLanguages[number];
   supportedLanguages: TLanguages;
   json: TTranslations;
+  enabled?: boolean;
 };
 
 export type I18nContextType<
+  TSupportedLanguages extends SupportedLanguages = SupportedLanguages,
   TTranslations extends Record<string, any> = Record<string, any>
 > = {
   t: (key: TranslationKeys<TTranslations>) => ReactNode;
-  language: string;
-  changeLanguage: (lang: string) => Promise<void>;
+  language: TSupportedLanguages[number];
+  changeLanguage: (lang: TSupportedLanguages[number]) => Promise<void>;
+  enabled?: boolean;
 };
 
 export type I18nProviderConfig<TLanguages extends SupportedLanguages> = {
   initialLanguage: TLanguages[number];
   supportedLanguages: TLanguages;
+  enabled?: boolean;
 };
 
-export type TypedI18nHook<TTranslations extends Record<string, any>> =
-  () => I18nContextType<TTranslations>;
+export type TypedI18nHook<
+  TSupportedLanguages extends SupportedLanguages = SupportedLanguages,
+  TTranslations extends Record<string, any> = Record<string, any>
+> = () => I18nContextType<TSupportedLanguages, TTranslations>;
