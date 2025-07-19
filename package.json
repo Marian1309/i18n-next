@@ -1,6 +1,6 @@
 {
   "name": "@pidchashyi/i18n-next",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A simple i18n library for React applications with TypeScript support",
   "keywords": [
     "i18n",
