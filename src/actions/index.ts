@@ -20,14 +20,17 @@ const getI18nPath = async () => {
   const configResult = await tryCatch(fs.readFile(configPath, "utf-8"));
 
   if (isFailure(configResult)) {
-    return path.join("src", "i18n", "locales");
+    return path.join(process.cwd(), "src", "i18n", "locales");
   }
 
   try {
     const config = JSON.parse(configResult.data);
-    return config.path || path.join("src", "i18n", "locales");
+    return path.join(
+      process.cwd(),
+      config.path || path.join("src", "i18n", "locales")
+    );
   } catch {
-    return path.join("src", "i18n", "locales");
+    return path.join(process.cwd(), "src", "i18n", "locales");
   }
 };
 
@@ -49,7 +52,7 @@ export const updateTranslationAction = async (
   newValue: string
 ) => {
   const i18nPath = await getI18nPath();
-  const filePath = path.join(process.cwd(), i18nPath, `${lang}.json`);
+  const filePath = path.join(i18nPath, `${lang}.json`);
 
   const fileContent = await tryCatch(fs.readFile(filePath, "utf-8"));
 
@@ -78,7 +81,7 @@ export const updateTranslationAction = async (
 
 export const loadTranslations = async (lang: string) => {
   const i18nPath = await getI18nPath();
-  const filePath = path.join(process.cwd(), i18nPath, `${lang}.json`);
+  const filePath = path.join(i18nPath, `${lang}.json`);
 
   const result = await tryCatch(fs.readFile(filePath, "utf-8"));
 

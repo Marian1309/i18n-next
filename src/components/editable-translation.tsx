@@ -27,7 +27,7 @@ export const EditableTranslation = <TKey extends string = string>({
   }, [value, language]);
 
   const handleDoubleClick = () => {
-    if (isSaving || value.trim() === `Missing translation: ${translationKey}`) {
+    if (isSaving || value === `Missing translation: ${translationKey}`) {
       return;
     }
     setIsEditing(true);
