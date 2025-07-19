@@ -41,12 +41,6 @@ export const EditableTranslation = <TKey extends string = string>({
     setIsEditing(true);
   };
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    startEditing();
-  };
-
   const handleClick = (e: React.MouseEvent) => {
     // Ctrl/Cmd + Click to edit
     if ((e.ctrlKey || e.metaKey) && canEdit()) {
@@ -119,7 +113,6 @@ export const EditableTranslation = <TKey extends string = string>({
   return (
     <span
       ref={spanRef}
-      onDoubleClick={handleDoubleClick}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
       onKeyDown={handleKeyDown}
