@@ -17,7 +17,7 @@ A type-safe i18n library for Next.js applications with inline editing capabiliti
 
 See the library in action:
 
-![Demo](./assets/video.gif)
+![Demo](https://pub-9d4cd6a3ac3143c6a106b1511fccf5e8.r2.dev/video.gif)
 
 ## 📋 Installation
 
