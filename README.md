@@ -1,4 +1,4 @@
-# @pidchashyi/next-i18n
+# @pidchashyi/i18n-next
 
 A type-safe i18n library for Next.js applications with inline editing capabilities and automatic translation management.
 
@@ -16,9 +16,9 @@ A type-safe i18n library for Next.js applications with inline editing capabiliti
 ## 📋 Installation
 
 ```bash
-npm install @pidchashyi/next-i18n
+npm install @pidchashyi/i18n-next
 # or
-bun add @pidchashyi/next-i18n
+bun add @pidchashyi/i18n-next
 ```
 
 ### Dependencies
@@ -88,7 +88,7 @@ Create `i18n.json` in your project root to customize the locale folder:
 Wrap your app with `I18nProvider` in your root layout:
 
 ```tsx
-import { I18nProvider } from "@pidchashyi/next-i18n";
+import { I18nProvider } from "@pidchashyi/i18n-next";
 import type { ReactNode } from "react";
 
 interface Properties {
@@ -123,7 +123,7 @@ export default RootLayout;
 Create a typed hook for your translations:
 
 ```tsx
-import { createTypedI18nHook } from "@pidchashyi/next-i18n";
+import { createTypedI18nHook } from "@pidchashyi/i18n-next";
 // pass the base language json file in order to get type-safety
 import jsonData from "@/i18n/locales/en.json";
 
