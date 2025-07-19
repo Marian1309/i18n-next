@@ -2,7 +2,8 @@ import { EditableTranslation } from "./editable-translation";
 
 type TranslationDisplayProps<TKey extends string = string> = {
   translationKey: TKey;
-  value: string | undefined;
+  template: string | undefined; // Original template with placeholders
+  interpolatedValue: string | undefined; // Interpolated display value
   language: string;
   onSave: (key: TKey, newValue: string) => Promise<void>;
   enabled?: boolean;
@@ -10,12 +11,13 @@ type TranslationDisplayProps<TKey extends string = string> = {
 
 export const TranslationDisplay = <TKey extends string = string>({
   translationKey,
-  value,
+  template,
+  interpolatedValue,
   language,
   onSave,
   enabled = true,
 }: TranslationDisplayProps<TKey>) => {
-  if (!value) {
+  if (!template || !interpolatedValue) {
     return (
       <span className="animate-[pulse_2s_ease-in-out_infinite] rounded-xl px-2 py-1 font-bold text-red-500">
         {translationKey}
@@ -27,7 +29,8 @@ export const TranslationDisplay = <TKey extends string = string>({
     <EditableTranslation
       key={`${language}:${translationKey}`}
       translationKey={translationKey}
-      value={value}
+      template={template}
+      interpolatedValue={interpolatedValue}
       language={language}
       onSave={onSave}
       enabled={enabled}

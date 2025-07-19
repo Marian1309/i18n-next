@@ -29,14 +29,15 @@ export const I18nClient = ({ config, children }: Properties) => {
       key: TranslationKeys<Record<string, any>>,
       variables?: InterpolationVariables
     ) => {
-      const value = translations[key];
-      const rawValue = value || `Missing translation: ${key}`;
-      const interpolatedValue = interpolateVariables(rawValue, variables);
+      const template = translations[key]; // Original template with placeholders
+      const rawTemplate = template || `Missing translation: ${key}`;
+      const interpolatedValue = interpolateVariables(rawTemplate, variables);
 
       return (
         <TranslationDisplay
           translationKey={key}
-          value={interpolatedValue}
+          template={rawTemplate}
+          interpolatedValue={interpolatedValue}
           language={language}
           onSave={handleTranslationSave}
           enabled={config.enabled ?? true}

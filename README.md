@@ -13,6 +13,12 @@ A type-safe i18n library for Next.js applications with inline editing capabiliti
 - 🎯 **Missing translation detection** with visual indicators
 - 🔄 **Real-time updates** with optimistic UI updates
 
+## 🎬 Demo
+
+See the library in action:
+
+![Demo](./assets/video.gif)
+
 ## 📋 Installation
 
 ```bash
@@ -174,9 +180,21 @@ All translations rendered by `t()` support multiple ways to trigger inline editi
 - **Escape** to cancel editing
 - **Click outside** to cancel editing
 
+#### **Placeholder-Safe Editing:**
+
+When editing translations that contain variable placeholders like `{name}` or `{count}`, the editor automatically:
+
+- **Shows the template** - You edit the original template with placeholders, not the interpolated text
+- **Validates placeholders** - Prevents saving if required placeholders are missing
+- **Provides hints** - Shows available placeholders in the tooltip and during editing
+- **Warns about changes** - Notifies when new placeholders are added
+
 ```tsx
-// This text supports multiple editing methods
-<h1>{t("common.welcome")}</h1>
+// Example: "Welcome, {name}!" with variables
+<h1>{t("welcome", { name: "John" })}</h1>
+// Displays: "Welcome, John!"
+// When editing: Shows "Welcome, {name}!" for editing
+// Validates: Ensures {name} placeholder is preserved
 
 // Works even inside buttons - use Ctrl/Cmd + Click
 <button className="px-4 py-2 bg-blue-500 text-white">
@@ -184,7 +202,11 @@ All translations rendered by `t()` support multiple ways to trigger inline editi
 </button>
 ```
 
-**Pro Tip:** When translations are inside buttons or other interactive elements, use **Ctrl/Cmd + Click** for the most reliable editing experience.
+**Pro Tips:**
+
+- When translations are inside buttons or other interactive elements, use **Ctrl/Cmd + Click** for the most reliable editing experience
+- When editing translations with placeholders, make sure to preserve all `{placeholderName}` variables
+- Hover over translations to see available placeholders in the tooltip
 
 Missing translations are automatically highlighted in red and can also be edited inline using any of the above methods.
 
@@ -286,8 +308,17 @@ Support for dynamic variables in translations:
 - **IntelliSense**: Auto-completion shows exactly which variables each translation needs
 - **Compile-time Validation**: Catches missing or incorrect variables before runtime
 - **Flexible**: Variables are only required if the translation contains `{variableName}` placeholders
+- **Safe Editing**: When editing translations with placeholders, the original template is preserved and validated
 
 Variables are interpolated using the `{variableName}` syntax. If a variable is not provided at runtime, the placeholder will remain unchanged in the output.
+
+**Editing with Variables:**
+When you edit a translation that contains placeholders like `"Welcome, {name}!"`, the inline editor:
+
+- Shows the original template for editing (not the interpolated version)
+- Validates that all required placeholders are preserved when saving
+- Provides helpful hints about available placeholders
+- Prevents accidental removal of variable placeholders
 
 ### Configuration Options
 

@@ -1,6 +1,6 @@
 {
   "name": "@pidchashyi/i18n-next",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "A simple i18n library for React applications with TypeScript support",
   "keywords": [
     "i18n",
@@ -10,13 +10,13 @@
     "translations",
     "nextjs"
   ],
-  "homepage": "https://github.com/Marian1309/next-i18n#readme",
+  "homepage": "https://github.com/Marian1309/i18n-next#readme",
   "bugs": {
-    "url": "https://github.com/Marian1309/next-i18n/issues"
+    "url": "https://github.com/Marian1309/i18n-next/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Marian1309/next-i18n.git"
+    "url": "git+https://github.com/Marian1309/i18n-next.git"
   },
   "license": "MIT",
   "author": "Marian Pidchashyi",
@@ -53,7 +53,6 @@
     "clsx": "^2.1.1",
     "javascript-obfuscator": "^4.1.1",
     "tailwind-merge": "^3.3.1",
-    "terser": "^5.43.1",
     "typescript": "^5.0.0"
   }
 }
