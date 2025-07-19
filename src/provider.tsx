@@ -28,7 +28,7 @@ export const I18nProvider = async ({ children, config }: Properties) => {
         ...config,
         initialLanguage: language,
         json: languageJsonData as FlatTranslations,
-        enabled: config.enabled ?? false,
+        enabled: config.enabled ?? true,
       }}
     >
       <Toaster />

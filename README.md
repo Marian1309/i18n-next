@@ -127,9 +127,11 @@ import { createTypedI18nHook } from "@pidchashyi/next-i18n";
 import jsonData from "@/i18n/locales/en.json";
 
 const SUPPORTED_LANGUAGES = ["en", "uk", "fr"] as const;
-type SupportedLanguages = typeof SUPPORTED_LANGUAGES;
 
-export const useI18n = createTypedI18nHook<SupportedLanguages, Translations>();
+export const useI18n = createTypedI18nHook<
+  typeof SupportedLanguages,
+  typeof jsonData
+>();
 ```
 
 Use in your components:

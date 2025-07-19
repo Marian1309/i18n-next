@@ -16,7 +16,7 @@ export const EditableTranslation = <TKey extends string = string>({
   value,
   language,
   onSave,
-  enabled = false,
+  enabled = true,
 }: EditableTranslationProps<TKey>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);

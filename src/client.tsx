@@ -32,7 +32,7 @@ export const I18nClient = ({ config, children }: Properties) => {
           value={value || `Missing translation: ${key}`}
           language={language}
           onSave={handleTranslationSave}
-          enabled={config.enabled ?? false}
+          enabled={config.enabled ?? true}
         />
       );
     },
@@ -46,7 +46,7 @@ export const I18nClient = ({ config, children }: Properties) => {
           t,
           language,
           changeLanguage,
-          enabled: config.enabled ?? false,
+          enabled: config.enabled ?? true,
         } as I18nContextType<SupportedLanguages, Record<string, any>>
       }
     >
