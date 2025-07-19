@@ -5,6 +5,7 @@ A type-safe i18n library for Next.js applications with inline editing capabiliti
 ## 🚀 Features
 
 - 🔒 **Full TypeScript support** with type-safe translation keys
+- 🔗 **Variable interpolation** for dynamic content
 - ⚡ **Server-side rendering** compatible with Next.js App Router
 - ✏️ **Inline editing** with double-click to edit translations
 - 🍪 **Automatic language persistence** via cookies
@@ -242,12 +243,52 @@ Creates a type-safe hook for accessing translations.
 
 ```tsx
 {
-  t: (key: keyof TTranslations) => ReactNode;
+  t: (key: keyof TTranslations, variables?: Record<string, string | number>) => ReactNode;
   language: TSupportedLanguages[number];
   changeLanguage: (lang: TSupportedLanguages[number]) => Promise<void>;
   enabled?: boolean; // Whether inline editing is enabled
 }
 ```
+
+The `t` function provides:
+
+- Full type safety for translation keys
+- Optional variables parameter for interpolation
+- Runtime interpolation of `{placeholder}` values
+
+### Variable Interpolation
+
+Support for dynamic variables in translations:
+
+```json
+{
+  "welcome": "Welcome, {name}!",
+  "itemCount": "You have {count} items",
+  "greeting": "Hello, {name}! You have {count} unread messages",
+  "simple": "This has no variables"
+}
+```
+
+```tsx
+// Usage with variables
+<h1>{t("welcome", { name: "John" })}</h1>
+<p>{t("itemCount", { count: 5 })}</p>
+<div>{t("greeting", { name: "Alice", count: 3 })}</div>
+<span>{t("simple")}</span>
+
+// Variables are optional
+<h1>{t("welcome")}</h1>                          // Will show "Welcome {name}"
+<p>{t("itemCount", { name: "John" })}</p>        // Unused variables are ignored
+```
+
+**Key Features:**
+
+- **Type Safety**: TypeScript automatically detects which variables are required for each translation key
+- **IntelliSense**: Auto-completion shows exactly which variables each translation needs
+- **Compile-time Validation**: Catches missing or incorrect variables before runtime
+- **Flexible**: Variables are only required if the translation contains `{variableName}` placeholders
+
+Variables are interpolated using the `{variableName}` syntax. If a variable is not provided at runtime, the placeholder will remain unchanged in the output.
 
 ### Configuration Options
 
@@ -274,6 +315,51 @@ your-project/
 └── app/
     ├── layout.tsx              # Setup I18nProvider
     └── page.tsx                # Use translations
+```
+
+## 🚀 Future Ideas
+
+### Global Loading UI (Planned)
+
+Optional global loading indicators during language switching and translation loading:
+
+```tsx
+<I18nProvider
+  config={{
+    initialLanguage: "en",
+    supportedLanguages: ["en", "uk", "fr"],
+    enabled: true,
+    loadingComponent: <GlobalSpinner />, // Optional global loading UI
+    showLoadingOverlay: true, // Optional overlay during language switching
+  }}
+>
+  {children}
+</I18nProvider>
+```
+
+### Namespace Support (Planned)
+
+Organize translations into logical namespaces:
+
+```tsx
+// Usage with namespaces
+const { t } = useI18n("auth"); // Load specific namespace
+<h1>{t("login.title")}</h1>;
+```
+
+### Lazy Loading (Planned)
+
+Load translation files on-demand for better performance:
+
+```tsx
+<I18nProvider
+  config={{
+    lazyLoad: true,
+    chunkSize: "page", // Load translations per page/route
+  }}
+>
+  {children}
+</I18nProvider>
 ```
 
 ## 🤝 Contributing

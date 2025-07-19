@@ -23,3 +23,17 @@ export function flattenTranslations(
 
   return flattened;
 }
+
+export function interpolateVariables(
+  template: string,
+  variables?: Record<string, string | number>
+): string {
+  if (!variables) {
+    return template;
+  }
+
+  return template.replace(/\{(\w+)\}/g, (match, key) => {
+    const value = variables[key];
+    return value !== undefined ? String(value) : match;
+  });
+}

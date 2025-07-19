@@ -26,6 +26,8 @@ export type FlattenTranslationType<T extends Record<string, any>> = {
   [K in LeafKeys<T>]: string;
 };
 
+export type InterpolationVariables = Record<string, string | number>;
+
 export type LanguageConfig<
   TLanguages extends SupportedLanguages = string[],
   TTranslations extends FlatTranslations = FlatTranslations
@@ -40,7 +42,10 @@ export type I18nContextType<
   TSupportedLanguages extends SupportedLanguages = SupportedLanguages,
   TTranslations extends Record<string, any> = Record<string, any>
 > = {
-  t: (key: TranslationKeys<TTranslations>) => ReactNode;
+  t: (
+    key: TranslationKeys<TTranslations>,
+    variables?: InterpolationVariables
+  ) => ReactNode;
   language: TSupportedLanguages[number];
   changeLanguage: (lang: TSupportedLanguages[number]) => Promise<void>;
   enabled?: boolean;

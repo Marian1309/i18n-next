@@ -5,12 +5,14 @@ import { ReactNode, useCallback } from "react";
 import { I18nContext } from "./context";
 import { TranslationDisplay } from "./components";
 import { useTranslationManager } from "./hooks";
+import { interpolateVariables } from "./lib/cn";
 import type {
   LanguageConfig,
   SupportedLanguages,
   FlatTranslations,
   I18nContextType,
   TranslationKeys,
+  InterpolationVariables,
 } from "./types";
 
 type Properties = {
@@ -23,13 +25,18 @@ export const I18nClient = ({ config, children }: Properties) => {
     useTranslationManager(config);
 
   const t = useCallback(
-    (key: TranslationKeys<Record<string, any>>) => {
+    (
+      key: TranslationKeys<Record<string, any>>,
+      variables?: InterpolationVariables
+    ) => {
       const value = translations[key];
+      const rawValue = value || `Missing translation: ${key}`;
+      const interpolatedValue = interpolateVariables(rawValue, variables);
 
       return (
         <TranslationDisplay
           translationKey={key}
-          value={value || `Missing translation: ${key}`}
+          value={interpolatedValue}
           language={language}
           onSave={handleTranslationSave}
           enabled={config.enabled ?? true}
