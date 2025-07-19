@@ -1,6 +1,6 @@
 {
   "name": "@pidchashyi/next-i18n",
-  "version": "1.2.2",
+  "version": "1.2.5",
   "description": "A simple i18n library for React applications with TypeScript support",
   "keywords": [
     "i18n",
@@ -36,6 +36,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "prepare": "bun run build",
     "postpublish": "rimraf -rf dist"
   },
   "dependencies": {

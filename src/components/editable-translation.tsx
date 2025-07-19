@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Input } from "./input";
+import { cn } from "../lib/cn";
 
 type EditableTranslationProps<TKey extends string = string> = {
   translationKey: TKey;
@@ -80,7 +81,12 @@ export const EditableTranslation = <TKey extends string = string>({
   return (
     <span
       onDoubleClick={handleDoubleClick}
-      className={isSaving ? "cursor-wait opacity-50" : "cursor-text"}
+      className={cn(
+        value === `Missing translation: ${translationKey}` &&
+          "text-red-500 animate-pulse font-bold",
+        !value.startsWith("Missing translation:") && "cursor-text",
+        isSaving && "cursor-wait opacity-50"
+      )}
     >
       {value}
     </span>
