@@ -3,7 +3,7 @@
 import { useContext } from "react";
 
 import { I18nContext } from "../context";
-import { FlatTranslations, I18nContextType } from "../types";
+import { I18nContextType } from "../types";
 
 const useI18n = <
   TTranslations extends Record<string, any> = Record<string, any>

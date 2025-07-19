@@ -18,13 +18,10 @@ export type LeafKeys<
 
 export type TranslationKeys<T extends Record<string, any>> = LeafKeys<T>;
 
-// Updated to support nested objects that will be flattened
 export type TranslationValue = string | Record<string, any>;
 
-// Flattened translations - this is what the library works with internally after flattening
 export type FlatTranslations = Record<string, string>;
 
-// Helper type to convert nested translation types to flattened types
 export type FlattenTranslationType<T extends Record<string, any>> = {
   [K in LeafKeys<T>]: string;
 };
@@ -38,7 +35,6 @@ export type LanguageConfig<
   json: TTranslations;
 };
 
-// Updated to work with flattened keys from nested types
 export type I18nContextType<
   TTranslations extends Record<string, any> = Record<string, any>
 > = {
@@ -52,6 +48,5 @@ export type I18nProviderConfig<TLanguages extends SupportedLanguages> = {
   supportedLanguages: TLanguages;
 };
 
-// Updated to accept nested translation types
 export type TypedI18nHook<TTranslations extends Record<string, any>> =
   () => I18nContextType<TTranslations>;

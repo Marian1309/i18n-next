@@ -15,6 +15,22 @@ import type {
   FlatTranslations,
 } from "../types";
 
+const getI18nPath = async () => {
+  const configPath = path.join(process.cwd(), "i18n.json");
+  const configResult = await tryCatch(fs.readFile(configPath, "utf-8"));
+
+  if (isFailure(configResult)) {
+    return path.join("src", "i18n", "locales");
+  }
+
+  try {
+    const config = JSON.parse(configResult.data);
+    return config.path || path.join("src", "i18n", "locales");
+  } catch {
+    return path.join("src", "i18n", "locales");
+  }
+};
+
 export const changeLanguageAction = async (
   lang: string,
   config: LanguageConfig<SupportedLanguages, FlatTranslations>
@@ -32,13 +48,8 @@ export const updateTranslationAction = async (
   key: string,
   newValue: string
 ) => {
-  const filePath = path.join(
-    process.cwd(),
-    "src",
-    "i18n",
-    "locales",
-    `${lang}.json`
-  );
+  const i18nPath = await getI18nPath();
+  const filePath = path.join(process.cwd(), i18nPath, `${lang}.json`);
 
   const fileContent = await tryCatch(fs.readFile(filePath, "utf-8"));
 
@@ -48,11 +59,9 @@ export const updateTranslationAction = async (
 
   const translations = JSON.parse(fileContent.data);
 
-  // Handle nested keys by setting the value at the correct path
   const keys = key.split(".");
   let current = translations;
 
-  // Navigate to the parent object
   for (let i = 0; i < keys.length - 1; i++) {
     if (!(keys[i] in current)) {
       current[keys[i]] = {};
@@ -60,7 +69,6 @@ export const updateTranslationAction = async (
     current = current[keys[i]];
   }
 
-  // Set the final value
   current[keys[keys.length - 1]] = newValue;
 
   await fs.writeFile(filePath, JSON.stringify(translations, null, 2) + "\n");
@@ -69,13 +77,9 @@ export const updateTranslationAction = async (
 };
 
 export const loadTranslations = async (lang: string) => {
-  const filePath = path.join(
-    process.cwd(),
-    "src",
-    "i18n",
-    "locales",
-    `${lang}.json`
-  );
+  const i18nPath = await getI18nPath();
+  const filePath = path.join(process.cwd(), i18nPath, `${lang}.json`);
+
   const result = await tryCatch(fs.readFile(filePath, "utf-8"));
 
   if (isFailure(result)) {
@@ -84,6 +88,5 @@ export const loadTranslations = async (lang: string) => {
 
   const nestedTranslations = JSON.parse(result.data);
 
-  // Flatten the nested translations into dot notation
   return flattenTranslations(nestedTranslations);
 };

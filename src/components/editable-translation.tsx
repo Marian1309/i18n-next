@@ -27,9 +27,10 @@ export const EditableTranslation = <TKey extends string = string>({
   }, [value, language]);
 
   const handleDoubleClick = () => {
-    if (!isSaving) {
-      setIsEditing(true);
+    if (isSaving || value.trim() === `Missing translation: ${translationKey}`) {
+      return;
     }
+    setIsEditing(true);
   };
 
   const handleSave = async () => {
@@ -40,7 +41,7 @@ export const EditableTranslation = <TKey extends string = string>({
       await onSave(translationKey, editedValue);
       setIsEditing(false);
     } catch (error) {
-      setEditedValue(value); // Revert on error
+      setEditedValue(value);
       toast.error("Failed to save translation");
     } finally {
       setIsSaving(false);
@@ -48,8 +49,8 @@ export const EditableTranslation = <TKey extends string = string>({
   };
 
   const handleBlur = () => {
-    setEditedValue(value); // Revert to original value
-    setIsEditing(false); // Exit edit mode
+    setEditedValue(value);
+    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

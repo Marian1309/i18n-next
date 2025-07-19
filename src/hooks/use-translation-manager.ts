@@ -36,12 +36,10 @@ export const useTranslationManager = (
     }
   }, [config.initialLanguage, config.json]);
 
-  // Keep translations in sync with language changes
   useEffect(() => {
     currentLanguageRef.current = language;
   }, [language]);
 
-  // Ensure translations are loaded when component mounts or language changes
   useEffect(() => {
     const initTranslations = async () => {
       try {
@@ -60,29 +58,24 @@ export const useTranslationManager = (
     async (key: TranslationKeys<Record<string, any>>, newValue: string) => {
       const prevTranslations = translations;
       try {
-        // Optimistically update UI
         const updatedTranslations = {
           ...translations,
           [key]: newValue,
         } as FlatTranslations;
         setTranslations(updatedTranslations);
 
-        // Save to file
         const result = await updateTranslationAction(language, key, newValue);
 
         if (result.success && currentLanguageRef.current === language) {
-          // Verify the update was successful
           const freshTranslations = await loadTranslations(language);
           if (freshTranslations[key] === newValue) {
             toast.success("Translation saved");
           } else {
-            // If the file content doesn't match what we expect, reload translations
             setTranslations(freshTranslations as FlatTranslations);
           }
         }
       } catch (error) {
         console.error("Failed to save translation:", error);
-        // Revert to previous state
         setTranslations(prevTranslations);
         toast.error("Failed to save translation");
         throw error;
@@ -105,13 +98,10 @@ export const useTranslationManager = (
       const prevTranslations = translations;
 
       try {
-        // Load new translations before changing the language
         const newTranslations = await loadTranslations(newLang);
 
-        // Update cookie first
         await changeLanguageAction(newLang, config);
 
-        // Then update state
         setLanguage(newLang);
         setTranslations(newTranslations as FlatTranslations);
       } catch (error) {
