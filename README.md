@@ -164,9 +164,8 @@ All translations rendered by `t()` support multiple ways to trigger inline editi
 
 #### **Edit Triggers:**
 
-- **Double-click** - Traditional method to start editing
+- **Right-click** - Context menu trigger for editing (Traditional method)
 - **Ctrl/Cmd + Click** - Most reliable method, works inside buttons and other interactive elements
-- **Right-click** - Context menu trigger for editing
 - **Keyboard navigation** - Tab to focus the text, then press `Enter` or `Space` to edit
 
 #### **Edit Controls:**
