@@ -22,6 +22,7 @@ export const EditableTranslation = <TKey extends string = string>({
   const [editedValue, setEditedValue] = useState(value);
   const [isSaving, setIsSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     setEditedValue(value);
@@ -29,15 +30,46 @@ export const EditableTranslation = <TKey extends string = string>({
     setIsSaving(false);
   }, [value, language]);
 
-  const handleDoubleClick = () => {
-    if (
-      !enabled ||
-      isSaving ||
-      value === `Missing translation: ${translationKey}`
-    ) {
-      return;
-    }
+  const canEdit = () => {
+    return (
+      enabled && !isSaving && value !== `Missing translation: ${translationKey}`
+    );
+  };
+
+  const startEditing = () => {
+    if (!canEdit()) return;
     setIsEditing(true);
+  };
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    startEditing();
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Ctrl/Cmd + Click to edit
+    if ((e.ctrlKey || e.metaKey) && canEdit()) {
+      e.preventDefault();
+      e.stopPropagation();
+      startEditing();
+    }
+  };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (!canEdit()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    startEditing();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Enter or Space to start editing when focused
+    if ((e.key === "Enter" || e.key === " ") && canEdit() && !isEditing) {
+      e.preventDefault();
+      e.stopPropagation();
+      startEditing();
+    }
   };
 
   const handleSave = async () => {
@@ -55,12 +87,12 @@ export const EditableTranslation = <TKey extends string = string>({
     }
   };
 
-  const handleBlur = () => {
+  const handleInputBlur = () => {
     setEditedValue(value);
     setIsEditing(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleSave();
     } else if (e.key === "Escape") {
@@ -75,8 +107,8 @@ export const EditableTranslation = <TKey extends string = string>({
         ref={inputRef}
         value={editedValue}
         onChange={(e) => setEditedValue(e.target.value)}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
+        onBlur={handleInputBlur}
+        onKeyDown={handleInputKeyDown}
         disabled={isSaving}
         autoFocus
         className={isSaving ? "cursor-wait opacity-50" : ""}
@@ -86,11 +118,23 @@ export const EditableTranslation = <TKey extends string = string>({
 
   return (
     <span
+      ref={spanRef}
       onDoubleClick={handleDoubleClick}
+      onClick={handleClick}
+      onContextMenu={handleContextMenu}
+      onKeyDown={handleKeyDown}
+      tabIndex={enabled ? 0 : undefined}
+      role={enabled ? "button" : undefined}
+      aria-label={enabled ? `Edit translation: ${value}` : undefined}
+      title={
+        enabled ? "Double-click, Ctrl+click, or right-click to edit" : undefined
+      }
       className={cn(
         value === `Missing translation: ${translationKey}` &&
           "text-red-500 animate-pulse font-bold",
-        isSaving && "cursor-wait opacity-50"
+        isSaving && "cursor-wait opacity-50",
+        enabled &&
+          "cursor-pointer hover:bg-gray-100 hover:rounded px-1 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:rounded"
       )}
     >
       {value}

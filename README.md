@@ -155,21 +155,36 @@ const HomePage = () => {
 export default HomePage;
 ```
 
-### Double-Click Inline Editing
+### Inline Editing
 
-All translations rendered by `t()` support inline editing:
+All translations rendered by `t()` support multiple ways to trigger inline editing:
 
-- **Double-click** any translation text to edit it
+#### **Edit Triggers:**
+
+- **Double-click** - Traditional method to start editing
+- **Ctrl/Cmd + Click** - Most reliable method, works inside buttons and other interactive elements
+- **Right-click** - Context menu trigger for editing
+- **Keyboard navigation** - Tab to focus the text, then press `Enter` or `Space` to edit
+
+#### **Edit Controls:**
+
 - **Enter** to save changes
 - **Escape** to cancel editing
 - **Click outside** to cancel editing
 
 ```tsx
-// This text can be double-clicked to edit
+// This text supports multiple editing methods
 <h1>{t("common.welcome")}</h1>
+
+// Works even inside buttons - use Ctrl/Cmd + Click
+<button className="px-4 py-2 bg-blue-500 text-white">
+  {t("common.submit")}
+</button>
 ```
 
-Missing translations are automatically highlighted in red and can also be edited inline.
+**Pro Tip:** When translations are inside buttons or other interactive elements, use **Ctrl/Cmd + Click** for the most reliable editing experience.
+
+Missing translations are automatically highlighted in red and can also be edited inline using any of the above methods.
 
 ### Language Switching
 
