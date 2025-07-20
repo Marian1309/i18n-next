@@ -1,6 +1,6 @@
 {
   "name": "@pidchashyi/i18n-next",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "A simple i18n library for React applications with TypeScript support",
   "keywords": [
     "i18n",
@@ -37,9 +37,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "build:obfuscated": "npm run build && node scripts/obfuscate.js",
-    "obfuscate": "node scripts/obfuscate.js",
-    "prepare": "bun run build:obfuscated",
+    "prepare": "bun run build",
     "postpublish": "rimraf -rf dist"
   },
   "dependencies": {
@@ -52,7 +50,6 @@
     "@types/node": "^24.0.3",
     "@types/react": "^18.0.0",
     "clsx": "^2.1.1",
-    "javascript-obfuscator": "^4.1.1",
     "tailwind-merge": "^3.3.1",
     "typescript": "^5.0.0"
   }
